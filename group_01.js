@@ -7,78 +7,68 @@ var mayella = ["Mayella", "89068", "35000", 2];
 
 var employees = [atticus, jem, boo, scout, robert, mayella];
 
-var empBonuses = [];  // bonuses of all employees
+var empBonuses = []; // bonuses of all employees
+var employeeObjects = [];
 
 for (var i = 0; i < employees.length; i++) {
-  empBonuses.push(calcBonus(employees[i]));
+	employeeObjects[i] = new Person(employees[i]);
 }
 
-empBonuses.forEach(function(employee) {
-  console.log("Name: " + employee[0] + ", Bonus Percentage: " + employee[1] +
-  "%, Total Compensation: $" + employee[2] + ", Total Bonus: $" + employee[3]);
-});
+for (var i = 0; i < employeeObjects.length; i++) {
+	empBonuses.push(calcBonus(employeeObjects[i]));
+}
 
-function calcBonus(employee) {
-  var empBonus = []; // individual employee bonus array
-  var bonusPercent = 0;
-  empBonus.push(employee[0]);
-  switch (employee[3]) {
-    case 1, 2:
-      bonusPercent = 0;
-      break;
-    case 3:
-      bonusPercent = .04;
-      break;
-    case 4:
-      bonusPercent = .06;
-      break;
-    case 5:
-      bonusPercent = .1;
-      break;
-    default:
-      bonusPercent = 0;
-  };
-  if (employee[1].length === 4) {
-    bonusPercent += .05;
-  }
 
-  if (employee[2] > 65000) {
-    bonusPercent -= .01;
-  }
 
-  if (bonusPercent > .13) {
-    bonusPercent = .13;
-  } else if (bonusPercent < 0) {
-    bonusPercent = 0;
-  }
-  empBonus.push(bonusPercent * 100);
 
-  empBonus.push(Math.round(employee[2] * 100) * (1 + bonusPercent) / 100);
-
-  empBonus.push(Math.round(bonusPercent * employee[2]));
-
-  return empBonus;
+function Person([name, employeeNumber, annualSalary, reviewRating]) {
+	this.name = name;
+	this.employeeNumber = employeeNumber;
+	this.annualSalary = annualSalary;
+	this.reviewRating = reviewRating;
 };
 
-var bonusTable = "";
+console.log(empBonuses);
 
-bonusTable += "<table><tr><th>Name</th><th>Bonus Percentage</th><th>Total Compensation</th><th>Total Bonus</th></tr>"
-empBonuses.forEach(function(empBonuses) {
-  var badBonus = "class=\"badBonus\"";
-  badBonus = empBonuses[1] === 0 ? "class=\"badBonus\"" : "class=\"goodBonus\"";
-  bonusTable += "<tr " + badBonus + "><td>" + empBonuses[0] +
-      "</td>" +
-      "<td>" +
-        empBonuses[1] +
-      "</td>" +
-      "<td>" +
-        empBonuses[2] +
-      "</td>" +
-      "<td>" +
-        empBonuses[3]
-      "</td>" +
-    "</tr>"
-});
-bonusTable += "</table>";
+function calcBonus(employee) {
+	var empBonus = {
+		bonusPercent: 0
+	};
+	empBonus.name = employee.name;
+	employee.annualSalary = Number(employee.annualSalary);
+	switch (employee.reviewRating) {
+	case 1, 2:
+		empBonus.bonusPercent = 0;
+		break;
+	case 3:
+		empBonus.bonusPercent = .04;
+		break;
+	case 4:
+		empBonus.bonusPercent = .06;
+		break;
+	case 5:
+		empBonus.bonusPercent = .1;
+		break;
+	default:
+		empBonus.bonusPercent = 0;
+	};
+	if (employee.employeeNumber === 4) {
+		empBonus.bonusPercent += .05;
+	}
 
-document.getElementById('bonusTable').innerHTML = bonusTable;
+	if (employee.annualSalary > 65000) {
+		empBonus.bonusPercent -= .01;
+	}
+
+	if (empBonus.bonusPercent > .13) {
+		empbonus.bonusPercent = .13;
+	} else if (empBonus.bonusPercent < 0) {
+		empBonus.bonusPercent = 0;
+	}
+
+	empBonus.totalCompensation = employee.annualSalary * empBonus.bonusPercent + employee.annualSalary;
+
+	empBonus.bonusAmount = Math.round(empBonus.bonusPercent * employee.annualSalary);
+
+	return empBonus;
+};
